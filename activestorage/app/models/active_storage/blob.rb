@@ -27,13 +27,13 @@ class ActiveStorage::Blob < ActiveRecord::Base
 
   self.table_name = "active_storage_blobs"
 
+  before_create { self.key = ActiveStorage::BlobKeyGenerator.new(self).generate unless key? }
+
   store :metadata, accessors: [ :analyzed, :identified, :key_format ], coder: ActiveRecord::Coders::JSON
 
   class_attribute :service
 
   has_many :attachments
-
-  before_create { self.key = ActiveStorage::BlobKeyGenerator.new(self).generate unless key? }
 
   scope :unattached, -> { left_joins(:attachments).where(ActiveStorage::Attachment.table_name => { blob_id: nil }) }
 
