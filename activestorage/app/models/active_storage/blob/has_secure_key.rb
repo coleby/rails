@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'active_storage/key_generator'
 
 module ActiveStorage::Blob::HasSecureKey
   extend ActiveSupport::Concern
@@ -12,6 +13,6 @@ module ActiveStorage::Blob::HasSecureKey
   # to be revealed directly to the user. Always refer to blobs using the signed_id or a verified form of the key.
   def key
     # We can't wait until the record is first saved to have a key for it
-    self[:key] ||= self.class.generate_unique_secure_token
+    self[:key] ||= ActiveStorage::KeyGenerator.new(self).generate
   end
 end

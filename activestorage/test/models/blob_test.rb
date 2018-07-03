@@ -26,7 +26,7 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
 
   test "blob generating key according to key_format" do
     class UserWithHasOneAttachedCustomKeyFormat < User
-      has_one_attached :avatar, key_format: ":id/:hash"
+      has_one_attached :avatar, key_format: ":hash/:filename.:extension"
     end
 
     user = UserWithHasOneAttachedCustomKeyFormat.create!
@@ -34,8 +34,22 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
     file = file_fixture "racecar.jpg"
     user.avatar.attach Rack::Test::UploadedFile.new file.to_s
 
-    assert_match(/#{user.id}\/[A-Za-z0-9]+/, user.avatar.key)
+    assert_match(/[A-Za-z0-9]+\/racecar.jpg/, user.avatar.key)
   end
+
+  test "blob saves key format used to generate key" do
+    class UserWithHasOneAttachedCustomKeyFormat < User
+      has_one_attached :avatar, key_format: ":hash/:filename.:extension"
+    end
+
+    user = UserWithHasOneAttachedCustomKeyFormat.create!
+
+    file = file_fixture "racecar.jpg"
+    user.avatar.attach Rack::Test::UploadedFile.new file.to_s
+
+    assert_match(":hash/:filename.:extension", user.avatar.key_format)
+  end
+
 
   test "create after upload sets byte size and checksum" do
     data = "Hello world!"
