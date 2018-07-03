@@ -64,9 +64,10 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
   end
 
   test "blob by default returns key_format defined in configuration" do
-    blob = create_blob filename: "town.jpg"
+    blob = ActiveStorage::Blob.new
+    default_key_format = ActiveStorage.default_key_format
 
-    assert_equal blob.key_format, ":hash"
+    assert_equal blob.key_format, default_key_format
   end
 
   test "create after upload sets byte size and checksum" do

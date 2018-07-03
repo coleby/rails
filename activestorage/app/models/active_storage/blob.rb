@@ -92,7 +92,7 @@ class ActiveStorage::Blob < ActiveRecord::Base
   end
 
   def key_format
-    super || ":hash"
+    super || ActiveStorage.default_key_format
   end
 
   # Returns an ActiveStorage::Filename instance of the filename that can be
