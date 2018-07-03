@@ -4,7 +4,7 @@ module ActiveStorage
   class BlobKeyGenerator
     def initialize(blob)
       @blob = blob
-      @key_format = blob.key_format || ":hash"
+      @key_format = blob.key_format
     end
 
     def generate

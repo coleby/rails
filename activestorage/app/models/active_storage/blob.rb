@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "active_storage/downloader"
+require "active_storage/blob_key_generator"
 
 # A blob is a record that contains the metadata about a file and a key for where that file resides on the service.
 # Blobs can be created in two ways:
@@ -23,7 +24,6 @@ class ActiveStorage::Blob < ActiveRecord::Base
   include Analyzable
   include Identifiable
   include Representable
-  include HasSecureKey
 
   self.table_name = "active_storage_blobs"
 
@@ -32,6 +32,8 @@ class ActiveStorage::Blob < ActiveRecord::Base
   class_attribute :service
 
   has_many :attachments
+
+  before_create { self.key = ActiveStorage::BlobKeyGenerator.new(self).generate unless key? }
 
   scope :unattached, -> { left_joins(:attachments).where(ActiveStorage::Attachment.table_name => { blob_id: nil }) }
 
@@ -79,6 +81,18 @@ class ActiveStorage::Blob < ActiveRecord::Base
   # It uses the framework-wide verifier on <tt>ActiveStorage.verifier</tt>, but with a dedicated purpose.
   def signed_id
     ActiveStorage.verifier.generate(id, purpose: :blob_id)
+  end
+
+  # Returns the key pointing to the file on the service that's associated with this blob. The key is in the
+  # standard secure-token format from Rails. So it'll look like: XTAPjJCJiuDrLk3TmwyJGpUo. This key is not intended
+  # to be revealed directly to the user. Always refer to blobs using the signed_id or a verified form of the key.
+  def key
+    # We can't wait until the record is first saved to have a key for it
+    self[:key] ||= ActiveStorage::BlobKeyGenerator.new(self).generate
+  end
+
+  def key_format
+    super || ":hash"
   end
 
   # Returns an ActiveStorage::Filename instance of the filename that can be

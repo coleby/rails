@@ -37,7 +37,7 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
     assert_match(/[A-Za-z0-9]+\/racecar.jpg/, user.avatar.key)
   end
 
-  test "blob saves key format used to generate key" do
+  test "blob saves key_format used to generate key" do
     class UserWithHasOneAttachedCustomKeyFormat < User
       has_one_attached :avatar, key_format: ":hash/:filename.:extension"
     end
@@ -50,6 +50,11 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
     assert_match(":hash/:filename.:extension", user.avatar.key_format)
   end
 
+  test "blob by default returns key_format defined in configuration" do
+    blob = create_blob filename: "town.jpg"
+
+    assert_equal blob.key_format, ":hash"
+  end
 
   test "create after upload sets byte size and checksum" do
     data = "Hello world!"
