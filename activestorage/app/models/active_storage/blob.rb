@@ -23,10 +23,10 @@ class ActiveStorage::Blob < ActiveRecord::Base
   include Analyzable
   include Identifiable
   include Representable
+  include HasSecureKey
 
   self.table_name = "active_storage_blobs"
 
-  has_secure_token :key
   store :metadata, accessors: [ :analyzed, :identified ], coder: ActiveRecord::Coders::JSON
 
   class_attribute :service
@@ -79,14 +79,6 @@ class ActiveStorage::Blob < ActiveRecord::Base
   # It uses the framework-wide verifier on <tt>ActiveStorage.verifier</tt>, but with a dedicated purpose.
   def signed_id
     ActiveStorage.verifier.generate(id, purpose: :blob_id)
-  end
-
-  # Returns the key pointing to the file on the service that's associated with this blob. The key is in the
-  # standard secure-token format from Rails. So it'll look like: XTAPjJCJiuDrLk3TmwyJGpUo. This key is not intended
-  # to be revealed directly to the user. Always refer to blobs using the signed_id or a verified form of the key.
-  def key
-    # We can't wait until the record is first saved to have a key for it
-    self[:key] ||= self.class.generate_unique_secure_token
   end
 
   # Returns an ActiveStorage::Filename instance of the filename that can be
