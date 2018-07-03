@@ -24,6 +24,19 @@ class ActiveStorage::BlobTest < ActiveSupport::TestCase
     assert_equal [blob_1, blob_2].map(&:id).sort, ActiveStorage::Blob.unattached.pluck(:id).sort
   end
 
+  test "blob generating key according to key_format" do
+    class UserWithHasOneAttachedCustomKeyFormat < User
+      has_one_attached :avatar, key_format: ":id/:hash"
+    end
+
+    user = UserWithHasOneAttachedCustomKeyFormat.create!
+
+    file = file_fixture "racecar.jpg"
+    user.avatar.attach Rack::Test::UploadedFile.new file.to_s
+
+    assert_match(/#{user.id}\/[A-Za-z0-9]+/, user.avatar.key)
+  end
+
   test "create after upload sets byte size and checksum" do
     data = "Hello world!"
     blob = create_blob data: data
