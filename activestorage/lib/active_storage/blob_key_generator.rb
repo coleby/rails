@@ -25,7 +25,7 @@ module ActiveStorage
         when ":extension"
           blob.filename.extension_without_delimiter
         else
-          raise StandardError, "Unsupported token #{token}"
+          raise InvalidKeyTokenError, "Invalid token for key_format: #{token}"
         end
       end
   end
