@@ -10,7 +10,7 @@ module ActiveStorage
   class Attached
     attr_reader :name, :record, :dependent, :key_format
 
-    def initialize(name, record, dependent:, key_format: ':hash')
+    def initialize(name, record, dependent:, key_format: ":hash")
       @name, @record, @dependent, @key_format = name, record, dependent, key_format
     end
 
@@ -24,7 +24,7 @@ module ActiveStorage
             io: attachable.open,
             filename: attachable.original_filename,
             content_type: attachable.content_type,
-            key_format: key_format
+            metadata: { key_format: key_format }
         when Hash
           ActiveStorage::Blob.create_after_upload!(attachable)
         when String
