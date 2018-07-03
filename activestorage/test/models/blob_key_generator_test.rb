@@ -25,6 +25,6 @@ class ActiveStorage::BlobKeyGeneratorTest < ActiveSupport::TestCase
       ActiveStorage::BlobKeyGenerator.new(@blob).generate
     end
 
-    assert_equal 'Invalid token for key_format: :invalid_key', error.message
+    assert_equal "Invalid token for key_format: :invalid_key", error.message
   end
 end
