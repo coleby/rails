@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 module ActiveStorage
-  class KeyGenerator
+  class BlobKeyGenerator
     def initialize(blob)
       @blob = blob
       @key_format = blob.key_format || ":hash"
     end
 
     def generate
-      key_format.scan(/:\w+/).reduce(key_format) do |interpolating, token|
-        converted = convert_token(token)
-        interpolating.sub(token, converted)
+      key_format.scan(/:\w+/).reduce(key_format) do |pattern, token|
+        pattern.sub(token, convert_token(token))
       end
     end
 
