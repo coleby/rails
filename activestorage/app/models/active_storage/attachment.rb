@@ -18,6 +18,7 @@ class ActiveStorage::Attachment < ActiveRecord::Base
 
   # Synchronously purges the blob (deletes it from the configured service) and destroys the attachment.
   def purge
+    puts "attachment purge"*100
     blob.purge
     destroy
   end
