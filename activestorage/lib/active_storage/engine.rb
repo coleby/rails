@@ -48,6 +48,7 @@ module ActiveStorage
         ActiveStorage.previewers = app.config.active_storage.previewers || []
         ActiveStorage.analyzers  = app.config.active_storage.analyzers || []
         ActiveStorage.paths      = app.config.active_storage.paths || {}
+        ActiveStorage.default_key_format = app.config.active_storage.default_key_format || ":hash"
 
         ActiveStorage.variable_content_types = app.config.active_storage.variable_content_types || []
         ActiveStorage.content_types_to_serve_as_binary = app.config.active_storage.content_types_to_serve_as_binary || []

@@ -4,4 +4,5 @@ module ActiveStorage
   class InvariableError < StandardError; end
   class UnpreviewableError < StandardError; end
   class UnrepresentableError < StandardError; end
+  class InvalidKeyTokenError < StandardError; end
 end
